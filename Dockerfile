@@ -1,7 +1,7 @@
 ARG TAG=3.10
 
 FROM alpine:$TAG as nweb
-ADD /nweb24.c /nweb24.c
+ADD ./nweb24.c /nweb24.c
 RUN apk add --update --no-cache gcc libc-dev \
     && cc -O2 nweb24.c -o nweb
 
