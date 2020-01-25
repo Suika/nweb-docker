@@ -1,0 +1,47 @@
+name: buildx
+on:
+  push:
+    branches: master
+
+jobs:
+  build-client:
+    runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        alpine_tags: [ 3.8, 3.9, 3.10, latest, edge ]
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v1
+      -
+        name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          version: latest
+      -
+        name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+      - 
+        name: Docker login
+        run: |
+          docker login -u "${DOCKER_REGISTRY_USERNAME}" -p "${DOCKER_REGISTRY_PASSWORD}"
+        env:
+          DOCKER_REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
+          DOCKER_REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+      -
+        name: Run Buildx ${{ matrix.alpine_tags }}
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6 \
+            --output "type=image,push=true" \
+            --tag suika/nweb:${ALPINE_TAG} \
+            --file ./Dockerfile .
+        env:
+          ALPINE_TAG: ${{ matrix.alpine_tags }}
+      - 
+        name: Docker logout
+        run: |
+          docker logout
+        env:
+          DOCKER_REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
