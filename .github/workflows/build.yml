@@ -8,7 +8,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        alpine_tags: [3.8,3.9,3.10,latest,edge ]
+        alpine_tags: [3.8,3.9,"3.10",latest,edge ]
     steps:
       -
         name: Checkout
@@ -36,6 +36,7 @@ jobs:
             --platform linux/amd64,linux/arm64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6 \
             --output "type=image,push=true" \
             --tag suika/nweb:${ALPINE_TAG} \
+            --build-arg TAG=${ALPINE_TAG}
             --file ./Dockerfile .
         env:
           ALPINE_TAG: ${{ matrix.alpine_tags }}
