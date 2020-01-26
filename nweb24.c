@@ -85,6 +85,8 @@ struct {
   { "3gp", "video/3gpp" },
   { "3g2", "video/3gpp2" },
   { "7z", "application/x-7z-compressed" },
+  { "txt", "text/plain" },
+  { "log", "text/plain" },
   {0,0} };
 
 void logger(int type, char *s1, char *s2, int socket_fd)
